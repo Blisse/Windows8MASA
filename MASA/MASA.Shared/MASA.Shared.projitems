@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8238602b-f22d-4704-8de5-ab2232dd91a7</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>MASA</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ApplicationSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\AwaitableDelegateCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\IAsyncCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ExclusiveScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IRaiseCanExecuteChanged.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\NavigationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\NavigationHelperEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\SampleDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Implementations\StorageService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IDialogService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\INavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IPasswordService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IStorageService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IUiDispatchService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Locator\ViewModelLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\BasePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\LogInPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\ItemClickedEventConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\ObjectToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\PasswordBoxToPasswordStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\StringCaseConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Pages\BaseViewModelPage.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)DataModel\SampleData.json" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\MediumGray.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\DarkGray.png" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
+  </ItemGroup>
+</Project>
