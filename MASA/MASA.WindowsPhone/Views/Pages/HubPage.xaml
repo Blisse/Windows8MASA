@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
-    d:DataContext="{Binding Source={d:DesignData Source=../MASA.Shared/DataModel/SampleData.json, Type=data:SampleDataSource}}"
+    d:DataContext="{Binding Source={d:DesignData Source=DataModel/SampleData.json, Type=data:SampleDataSource}}"
     xmlns:data="using:MASA.Data"
     xmlns:pages="using:MASA.Views.Pages"
     mc:Ignorable="d">
@@ -22,19 +22,9 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <!-- Grid-appropriate item template as seen in section 2 -->
-            <DataTemplate x:Key="Standard200x180TileItemTemplate">
-                <Grid Width="180">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="173" Width="173" Grid.Row="0" HorizontalAlignment="Left">
-                        <Image Source="{Binding ImagePath}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}" Height="173" Width="173"/>
-                    </Border>
-                    <TextBlock Text="{Binding Title}" Style="{ThemeResource BaseTextBlockStyle}" Typography.Capitals="SmallCaps" Grid.Row="1" Margin="0,12,0,0" IsTextScaleFactorEnabled="False"/>
-                </Grid>
-            </DataTemplate>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Controls/Standard200X180TileItemTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate x:Key="StandardTripleLineItemTemplate">
                 <Grid>
@@ -100,7 +90,7 @@
                         ItemsSource="{Binding Items}"
                         AutomationProperties.AutomationId="ItemGridView"
                         AutomationProperties.Name="Items In Group"
-                        ItemTemplate="{StaticResource Standard200x180TileItemTemplate}"
+                        ItemTemplate="{StaticResource Standard200X180TileItemTemplate}"
                         SelectionMode="None"
                         IsItemClickEnabled="True"
                         ItemClick="ItemView_ItemClick"
