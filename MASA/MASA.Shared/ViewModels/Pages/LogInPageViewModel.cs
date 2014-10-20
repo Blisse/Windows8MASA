@@ -3,8 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using MASA.Common.Commands;
 using MASA.Common.LifeCycle;
+using MASA.ViewModels.Controls;
 
 namespace MASA.ViewModels.Pages
 {
@@ -25,10 +27,18 @@ namespace MASA.ViewModels.Pages
 
         public LogInPageViewModel()
         {
+            LogInCommand = new AwaitableDelegateCommand(ExecuteLogIn);
         }
 
         #region Command Methods
 
+        private async Task ExecuteLogIn()
+        {
+            UsernamePasswordControlViewModel usernamePasswordControl =
+                SimpleIoc.Default.GetInstance<UsernamePasswordControlViewModel>("LogInUsernameControl");
+
+            await Task.Delay(1000);
+        }
 
         #endregion
 

@@ -43,10 +43,11 @@ namespace MASA.ViewModels.Locator
             else
             {
                 // Create run time view services and models
-
-                SimpleIoc.Default.Register<IStorageService, StorageService>();
-                SimpleIoc.Default.Register<LogInPageViewModel>();
+;
             }
+
+            SimpleIoc.Default.Register<IStorageService, StorageService>();
+            SimpleIoc.Default.Register<LogInPageViewModel>();
         }
 
         public LogInPageViewModel LogInPage

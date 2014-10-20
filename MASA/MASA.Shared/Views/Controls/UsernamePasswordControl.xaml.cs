@@ -14,23 +14,40 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using GalaSoft.MvvmLight.Ioc;
+using MASA.ViewModels.Controls;
 
 namespace MASA.Views.Controls
 {
     public sealed partial class UsernamePasswordControl : UserControl
     {
+        private String _id;
+        public String Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        private UsernamePasswordControlViewModel _controlViewModel = new UsernamePasswordControlViewModel();
+        public UsernamePasswordControlViewModel ControlViewModel
+        {
+            get { return _controlViewModel; }
+            set { _controlViewModel = value; }
+        }
+
         public UsernamePasswordControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            ControlViewModel = new UsernamePasswordControlViewModel();
 
-            this.Loaded += (sender, args) =>
+            Loaded += (sender, args) =>
             {
-
+                SimpleIoc.Default.Register(() => ControlViewModel, Id);
             };
 
-            this.Unloaded += (sender, args) =>
+            Unloaded += (sender, args) =>
             {
-
+                SimpleIoc.Default.Unregister(Id);
             };
         }
     }
