@@ -1,5 +1,5 @@
 ﻿<local:BaseViewModelPage
-    x:Class="MASA.Views.Pages.LogInPage"
+    x:Class="MASA.Views.Pages.RegisterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MASA.Views.Pages"
@@ -8,23 +8,22 @@
     xmlns:controls="using:MASA.Views.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=LogInPage}">
-    
+    DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=RegisterPage}">
+
     <Grid x:Name="Root" Margin="40,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:UsernamePasswordControl Grid.Row="0" Id="{Binding ElementName=Root, Path=DataContext.LogInUsernamePasswordControlId}"/>    
+        <controls:UsernamePasswordControl Grid.Row="0" Id="{Binding ElementName=Root, Path=DataContext.RegisterUsernamePasswordControlId}"/>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Command="{Binding LogInCommand}" Content="Log In"></Button>
-            <Button Grid.Column="1" Command="{Binding NavigateToRegisterCommand}" Content="Sign Up"></Button>
+            <Button Grid.Column="0" Command="{Binding SignUpCommand}" Content="Create Account"></Button>
         </Grid>
     </Grid>
 </local:BaseViewModelPage>

@@ -33,6 +33,12 @@ namespace MASA.ViewModels.Pages
         public LogInPageViewModel()
         {
             LogInCommand = new AwaitableDelegateCommand(ExecuteLogIn);
+            NavigateToRegisterCommand = new RelayCommand(ExecuteNavigateToRegister);
+        }
+
+        private void ExecuteNavigateToRegister()
+        {
+            NavigationService.Navigate(typeof(RegisterPageViewModel));
         }
 
         #region Command Methods
@@ -42,7 +48,12 @@ namespace MASA.ViewModels.Pages
             UsernamePasswordControlViewModel usernamePasswordControl =
                 SimpleIoc.Default.GetInstance<UsernamePasswordControlViewModel>(LogInUsernamePasswordControlId);
 
-            await Task.Delay(1000);
+            String username = usernamePasswordControl.Username;
+            String password = usernamePasswordControl.Password;
+
+            // Do more stuff here
+
+            await Task.Delay(500);
         }
 
         #endregion

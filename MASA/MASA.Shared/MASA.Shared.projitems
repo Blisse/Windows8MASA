@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Locator\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\BasePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\LogInPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\RegisterPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Controls\UsernamePasswordControl.xaml.cs">
       <DependentUpon>UsernamePasswordControl.xaml</DependentUpon>
     </Compile>

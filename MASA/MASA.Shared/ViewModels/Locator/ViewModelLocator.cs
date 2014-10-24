@@ -48,17 +48,24 @@ namespace MASA.ViewModels.Locator
 
             SimpleIoc.Default.Register<IStorageService, StorageService>();
             SimpleIoc.Default.Register<LogInPageViewModel>();
+            SimpleIoc.Default.Register<RegisterPageViewModel>();
         }
 
         public LogInPageViewModel LogInPage
         {
             get { return ServiceLocator.Current.GetInstance<LogInPageViewModel>(); }
         }
+
+        public RegisterPageViewModel RegisterPage
+        {
+            get { return ServiceLocator.Current.GetInstance<RegisterPageViewModel>(); }
+        }
         
         public static void Cleanup()
         {
             SimpleIoc.Default.Unregister<IStorageService>();
             SimpleIoc.Default.Unregister<LogInPageViewModel>();
+            SimpleIoc.Default.Unregister<RegisterPageViewModel>();
         }
     }
 }

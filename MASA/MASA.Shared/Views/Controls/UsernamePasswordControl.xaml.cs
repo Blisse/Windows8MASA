@@ -31,8 +31,17 @@ namespace MASA.Views.Controls
 
         private void IdPropertyChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            SimpleIoc.Default.Unregister((String)dependencyPropertyChangedEventArgs.OldValue);
-            SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, (String)dependencyPropertyChangedEventArgs.NewValue);
+            String oldId = (String) dependencyPropertyChangedEventArgs.OldValue;
+            String newId = (String) dependencyPropertyChangedEventArgs.NewValue;
+
+            if (SimpleIoc.Default.IsRegistered<UsernamePasswordControlViewModel>(oldId))
+            {
+                SimpleIoc.Default.Unregister(oldId);
+            }
+            if (!SimpleIoc.Default.IsRegistered<UsernamePasswordControlViewModel>(newId))
+            {
+                SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, newId);
+            }
         }
 
         public String Id
@@ -54,12 +63,18 @@ namespace MASA.Views.Controls
 
             Loaded += (sender, args) =>
             {
-                SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, Id);
+                if (!SimpleIoc.Default.IsRegistered<UsernamePasswordControlViewModel>(Id))
+                {
+                    SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, Id);   
+                }
             };
 
             Unloaded += (sender, args) =>
             {
-                SimpleIoc.Default.Unregister(Id);
+                if (SimpleIoc.Default.IsRegistered<UsernamePasswordControlViewModel>(Id))
+                {
+                    SimpleIoc.Default.Unregister(Id);
+                }
             };
         }
     }

@@ -43,7 +43,8 @@ namespace MASA
             this.Suspending += this.OnSuspending;
 #if WINDOWS_PHONE_APP
             // Map concrete PageViewModel to concrete ViewModelPages here
-            // BaseViewModelPage.PageDictionary.Add(typeof(LogInPageViewModel), typeof(LogInPage);
+            BaseViewModelPage.PageDictionary.Add(typeof(LogInPageViewModel), typeof(LogInPage));
+            BaseViewModelPage.PageDictionary.Add(typeof(RegisterPageViewModel), typeof(RegisterPage));
 #else
 
 #endif

@@ -5,9 +5,33 @@
     xmlns:local="using:MASA.Views.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:MASA.Views.Controls"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Hub>
+            <HubSection Header="Log In" Width="300">
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="300" MaxWidth="300"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <controls:UsernamePasswordControl HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Sign Up">
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock />
+                    </Grid>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
     </Grid>
 </Page>
