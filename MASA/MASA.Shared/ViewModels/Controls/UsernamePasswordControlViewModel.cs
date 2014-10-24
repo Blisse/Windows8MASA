@@ -5,12 +5,11 @@ using GalaSoft.MvvmLight;
 
 namespace MASA.ViewModels.Controls
 {
-    public class UsernamePasswordControlViewModel : ObservableObject
+    public class UsernamePasswordControlViewModel : ViewModelBase
     {
-
         #region Properties
 
-        private String _username;
+        private String _username = String.Empty;
         public String Username
         {
             get
@@ -30,7 +29,7 @@ namespace MASA.ViewModels.Controls
             }
         }
 
-        private String _password;
+        private String _password = String.Empty;
         public String Password
         {
             get
@@ -51,10 +50,5 @@ namespace MASA.ViewModels.Controls
         }
 
         #endregion
-
-        public UsernamePasswordControlViewModel()
-        {
-            
-        }
     }
 }

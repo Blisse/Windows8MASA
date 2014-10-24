@@ -10,13 +10,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=LogInPage}">
     
-    <Grid>
+    <Grid x:Name="Root">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <controls:UsernamePasswordControl Grid.Row="0" Id="LogInUsernameControl"/>    
+
+        <controls:UsernamePasswordControl Grid.Row="0" Id="{Binding ElementName=Root, Path=DataContext.LogInUsernamePasswordControlId}"/>    
                 
         <Button Grid.Row="1" Command="{Binding LogInCommand}" Content="Load"></Button>
     </Grid>

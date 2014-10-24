@@ -30,7 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IPasswordService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IStorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IUiDispatchService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\UsernamePasswordControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\UsernamePasswordControlViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Locator\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\BasePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\LogInPageViewModel.cs" />

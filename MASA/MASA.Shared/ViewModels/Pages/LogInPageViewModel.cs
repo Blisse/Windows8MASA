@@ -23,6 +23,11 @@ namespace MASA.ViewModels.Pages
         public AwaitableDelegateCommand LogInCommand { get; set; }
         public RelayCommand NavigateToRegisterCommand { get; set; }
 
+        public String LogInUsernamePasswordControlId
+        {
+            get { return "LogInUsernamePasswordControlId"; }
+        } 
+
         #endregion
 
         public LogInPageViewModel()
@@ -35,7 +40,7 @@ namespace MASA.ViewModels.Pages
         private async Task ExecuteLogIn()
         {
             UsernamePasswordControlViewModel usernamePasswordControl =
-                SimpleIoc.Default.GetInstance<UsernamePasswordControlViewModel>("LogInUsernameControl");
+                SimpleIoc.Default.GetInstance<UsernamePasswordControlViewModel>(LogInUsernamePasswordControlId);
 
             await Task.Delay(1000);
         }

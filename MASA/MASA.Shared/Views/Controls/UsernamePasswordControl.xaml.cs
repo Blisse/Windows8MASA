@@ -21,28 +21,40 @@ namespace MASA.Views.Controls
 {
     public sealed partial class UsernamePasswordControl : UserControl
     {
-        private String _id;
-        public String Id
+        public static readonly DependencyProperty IdProperty = DependencyProperty.Register("Id", typeof (String),
+            typeof (UsernamePasswordControl), new PropertyMetadata(String.Empty, IdPropertyChanged));
+
+        private static void IdPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            get { return _id; }
-            set { _id = value; }
+            ((UsernamePasswordControl) dependencyObject).IdPropertyChanged(dependencyPropertyChangedEventArgs);
         }
 
-        private UsernamePasswordControlViewModel _controlViewModel = new UsernamePasswordControlViewModel();
-        public UsernamePasswordControlViewModel ControlViewModel
+        private void IdPropertyChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            get { return _controlViewModel; }
-            set { _controlViewModel = value; }
+            SimpleIoc.Default.Unregister((String)dependencyPropertyChangedEventArgs.OldValue);
+            SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, (String)dependencyPropertyChangedEventArgs.NewValue);
+        }
+
+        public String Id
+        {
+            get { return (String) GetValue(IdProperty); }
+            set { SetValue(IdProperty, value); }
+        }
+
+        private UsernamePasswordControlViewModel _usernamePasswordControlViewModel = new UsernamePasswordControlViewModel();
+        public UsernamePasswordControlViewModel UsernamePasswordControlViewModel
+        {
+            get { return _usernamePasswordControlViewModel; }
+            set { _usernamePasswordControlViewModel = value; }
         }
 
         public UsernamePasswordControl()
         {
             InitializeComponent();
-            ControlViewModel = new UsernamePasswordControlViewModel();
 
             Loaded += (sender, args) =>
             {
-                SimpleIoc.Default.Register(() => ControlViewModel, Id);
+                SimpleIoc.Default.Register(() => UsernamePasswordControlViewModel, Id);
             };
 
             Unloaded += (sender, args) =>
