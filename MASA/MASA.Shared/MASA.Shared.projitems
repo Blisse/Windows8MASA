@@ -36,6 +36,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IPasswordService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IStorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IUiDispatchService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\HackerNews\StoryTitleControl.xaml.cs">
+      <DependentUpon>StoryTitleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\HackerNews\TitleControl.xaml.cs">
+      <DependentUpon>TitleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\UsernamePasswordControlViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Locator\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\BasePageViewModel.cs" />
@@ -60,7 +66,19 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)ViewModels\Controls\HackerNews\StoryTitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)ViewModels\Controls\HackerNews\TitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Controls\UsernamePasswordControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Resources\ApplicationStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

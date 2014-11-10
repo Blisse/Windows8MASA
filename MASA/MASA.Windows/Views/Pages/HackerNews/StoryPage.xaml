@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:MASA.Views.Pages"
+    xmlns:controls="using:MASA.ViewModels.Controls.HackerNews"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=StoryPage}">
     
@@ -259,7 +260,7 @@
     </pages:BaseViewModelPage.Resources>
 
     <Grid Background="#222222">
-        <Grid Margin="15, 40">
+        <Grid Margin="15, 40, 15, 105">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -271,10 +272,7 @@
                             IsEnabled="{Binding IsLoading}"
                             Background="#222222"
                             Style="{StaticResource ThemedProgressBarStyle}"/>
-                <TextBlock FontSize="80" FontWeight="SemiBold" Padding="20,25">
-                    <Run Text="Hacker" Foreground="#FF9900"/>
-                    <Run Text="Story"/>
-                </TextBlock>
+                <controls:TitleControl PageName="Story"/>
             </Grid>
             <Grid Grid.Row="1" Margin="50,0,50,50">
                 <WebView DefaultBackgroundColor="#222222" Source="{Binding Story.LinkUrl}"
