@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:MASA.Views.Pages"
-    xmlns:controls="using:MASA.ViewModels.Controls.HackerNews"
+    xmlns:controls="using:MASA.Views.Controls.HackerNews"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=StoryPage}">
     
@@ -275,7 +277,23 @@
                 <controls:TitleControl PageName="Story"/>
             </Grid>
             <Grid Grid.Row="1" Margin="50,0,50,50">
-                <WebView DefaultBackgroundColor="#222222" Source="{Binding Story.LinkUrl}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <ListView ItemContainerStyle="{StaticResource TransparentCheckMarkListViewItemStyle}"
+                              SelectionMode="None">
+                        <ListViewItem>
+                            <Grid Margin="0,15">
+                                <controls:StoryTitleControl Story="{Binding Story.StoryModel}"/>
+                            </Grid>
+                        </ListViewItem>
+                    </ListView>
+                </Grid>
+                
+                <WebView Grid.Row="1" DefaultBackgroundColor="#222222" Source="{Binding Story.LinkUrl}"
                          FrameNavigationStarting="WebView_OnFrameNavigationStarting"
                          FrameNavigationCompleted="WebView_OnFrameNavigationCompleted"
                          FrameContentLoading="WebView_OnFrameContentLoading"

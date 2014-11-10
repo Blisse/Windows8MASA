@@ -14,9 +14,10 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using GalaSoft.MvvmLight.Command;
 using MASA.DataModel.HackerNews;
 
-namespace MASA.ViewModels.Controls.HackerNews
+namespace MASA.Views.Controls.HackerNews
 {
     public sealed partial class StoryTitleControl : UserControl
     {
@@ -27,6 +28,26 @@ namespace MASA.ViewModels.Controls.HackerNews
         {
             get { return (StoryModel)GetValue(StoryProperty); }
             set { SetValue(StoryProperty, value); }
+        }
+
+        private static readonly DependencyProperty CommentCommandProperty = DependencyProperty.Register(
+            "CommentCommand", typeof (RelayCommand<StoryModel>),
+            typeof (StoryTitleControl), new PropertyMetadata(null));
+
+        public RelayCommand<StoryModel> CommentCommand
+        {
+            get { return (RelayCommand<StoryModel>)GetValue(CommentCommandProperty); }
+            set { SetValue(CommentCommandProperty, value); }
+        }
+
+        private static readonly DependencyProperty CommentCommandParameterProperty =
+            DependencyProperty.Register("CommentCommandParameter", typeof (StoryModel),
+                typeof (StoryTitleControl), new PropertyMetadata(null));
+
+        public StoryModel CommentCommandParameter
+        {
+            get { return (StoryModel)GetValue(CommentCommandParameterProperty); }
+            set { SetValue(CommentCommandParameterProperty, value); }
         }
 
         public StoryTitleControl()
