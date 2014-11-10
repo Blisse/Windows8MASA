@@ -14,7 +14,7 @@ namespace MASA.ViewModels.Pages
         /// <summary>
         /// This CancellationTokenSource generates a token that will be Cancelled when the Page's OnNavigatedFrom is called.
         /// </summary>
-        protected CancellationTokenSource PageSavedStateCancellationTokenSource;
+        protected CancellationTokenSource ActivePageCancellationTokenSource;
 
         private bool _isLoading = false;
         public bool IsLoading
@@ -113,13 +113,15 @@ namespace MASA.ViewModels.Pages
 
         public virtual void LoadState(LoadStateEventArgs e)
         {
-            PageSavedStateCancellationTokenSource = new CancellationTokenSource();
+            ActivePageCancellationTokenSource = new CancellationTokenSource();
         }
 
         public virtual void SaveState(SaveStateEventArgs e)
         {
-            PageSavedStateCancellationTokenSource.Cancel();
-            PageSavedStateCancellationTokenSource = null;
+            ActivePageCancellationTokenSource.Cancel();
+            ActivePageCancellationTokenSource = null;
+
+            IsLoading = false;
         }
     }
 }

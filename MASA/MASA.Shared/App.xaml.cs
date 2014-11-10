@@ -20,7 +20,9 @@ using MASA.Common;
 // The Universal Hub Application project template is documented at http://go.microsoft.com/fwlink/?LinkID=391955
 using MASA.Common.LifeCycle;
 using MASA.ViewModels.Pages;
+using MASA.ViewModels.Pages.HackerNews;
 using MASA.Views.Pages;
+using MASA.Views.Pages.HackerNews;
 
 namespace MASA
 {
@@ -46,7 +48,9 @@ namespace MASA
             BaseViewModelPage.PageDictionary.Add(typeof(LogInPageViewModel), typeof(LogInPage));
             BaseViewModelPage.PageDictionary.Add(typeof(RegisterPageViewModel), typeof(RegisterPage));
 #else
-
+            BaseViewModelPage.PageDictionary.Add(typeof(NewsPageViewModel), typeof(NewsPage));
+            BaseViewModelPage.PageDictionary.Add(typeof(StoryPageViewModel), typeof(StoryPage));
+            BaseViewModelPage.PageDictionary.Add(typeof(CommentsPageViewModel), typeof(CommentsPage));
 #endif
         }
 
@@ -118,7 +122,7 @@ namespace MASA
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(typeof(LogInPage), e.Arguments))
+                if (!rootFrame.Navigate(typeof(NewsPage), e.Arguments))
                 {
                     throw new Exception("Failed to create initial page");
                 }

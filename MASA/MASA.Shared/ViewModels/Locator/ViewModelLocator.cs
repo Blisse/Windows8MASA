@@ -13,15 +13,16 @@
 */
 
 
-
 namespace MASA.ViewModels.Locator
 {
+
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Ioc;
-    using Microsoft.Practices.ServiceLocation;
-    using MASA.Services.Implementations;
-    using MASA.Services.Interfaces;
-    using MASA.ViewModels.Pages;
+    using Services.Implementations;
+    using Services.Implementations.HackerNews;
+    using Services.Interfaces;
+    using Pages;
+    using Pages.HackerNews;
 
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -34,8 +35,6 @@ namespace MASA.ViewModels.Locator
         /// </summary>
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
@@ -47,25 +46,50 @@ namespace MASA.ViewModels.Locator
             }
 
             SimpleIoc.Default.Register<IStorageService, StorageService>();
+            SimpleIoc.Default.Register<IHackerNewsService, HackerNewsService>();
+
             SimpleIoc.Default.Register<LogInPageViewModel>();
             SimpleIoc.Default.Register<RegisterPageViewModel>();
+
+            SimpleIoc.Default.Register<NewsPageViewModel>();
+            SimpleIoc.Default.Register<StoryPageViewModel>();
+            SimpleIoc.Default.Register<CommentsPageViewModel>();
         }
 
         public LogInPageViewModel LogInPage
         {
-            get { return ServiceLocator.Current.GetInstance<LogInPageViewModel>(); }
+            get { return SimpleIoc.Default.GetInstance<LogInPageViewModel>(); }
         }
 
         public RegisterPageViewModel RegisterPage
         {
-            get { return ServiceLocator.Current.GetInstance<RegisterPageViewModel>(); }
+            get { return SimpleIoc.Default.GetInstance<RegisterPageViewModel>(); }
+        }
+
+        public NewsPageViewModel NewsPage
+        {
+            get { return SimpleIoc.Default.GetInstance<NewsPageViewModel>(); }
+        }
+
+        public StoryPageViewModel StoryPage
+        {
+            get { return SimpleIoc.Default.GetInstance<StoryPageViewModel>(); }
+        }
+
+        public CommentsPageViewModel CommentsPage
+        {
+            get { return SimpleIoc.Default.GetInstance<CommentsPageViewModel>(); }
         }
         
         public static void Cleanup()
         {
+            SimpleIoc.Default.Unregister<IHackerNewsService>();
             SimpleIoc.Default.Unregister<IStorageService>();
             SimpleIoc.Default.Unregister<LogInPageViewModel>();
             SimpleIoc.Default.Unregister<RegisterPageViewModel>();
+            SimpleIoc.Default.Unregister<NewsPageViewModel>();
+            SimpleIoc.Default.Unregister<StoryPageViewModel>();
+            SimpleIoc.Default.Unregister<CommentsPageViewModel>();
         }
     }
 }

@@ -17,13 +17,19 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Common\ApplicationSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\AwaitableDelegateCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\DelegateCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\IAsyncCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Commands\IRaiseCanExecuteChanged.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ExclusiveScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\IRaiseCanExecuteChanged.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\NavigationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\NavigationHelperEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\LifeCycle\SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Utilities\DateTimeOffsetUtility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Utilities\TextUtility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\HackerNews\CommentModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataModel\HackerNews\StoryModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataModel\SampleDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Implementations\HackerNews\HackerNewsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Implementations\StorageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\IDialogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Interfaces\INavigationService.cs" />
@@ -33,6 +39,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Controls\UsernamePasswordControlViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Locator\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\BasePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\HackerNews\CommentsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\HackerNews\NewsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\HackerNews\StoryPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\LogInPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Pages\RegisterPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Controls\UsernamePasswordControl.xaml.cs">
