@@ -12,17 +12,6 @@
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=NewsPage}">
 
-    <pages:BaseViewModelPage.Resources>
-        <ResourceDictionary>
-            
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Views/Resources/ApplicationStyles.xaml"></ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-
-        </ResourceDictionary>
-        
-    </pages:BaseViewModelPage.Resources>
-
     <pages:BaseViewModelPage.BottomAppBar>
         <AppBar Background="#FF6600" IsSticky="True" IsOpen="True">
             <AppBarButton Icon="Refresh" Label="Refresh" Command="{Binding RefreshNewsCommand}"/>
@@ -36,7 +25,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <ProgressBar HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,0,0,10"
+                <ProgressBar HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,10"
                          IsIndeterminate="{Binding IsLoading}"
                          IsEnabled="{Binding IsLoading}"
                          Background="#222222"
@@ -49,7 +38,7 @@
                           ItemContainerStyle="{StaticResource TransparentCheckMarkListViewItemStyle}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="0,15">
+                            <Grid Margin="0,5">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Tapped">
                                         <core:InvokeCommandAction Command="{Binding Source={StaticResource ViewModelLocator}, Path=NewsPage.NavigateToStoryCommand}" 

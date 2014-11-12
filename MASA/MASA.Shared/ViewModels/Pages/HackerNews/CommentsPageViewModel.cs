@@ -87,13 +87,13 @@ namespace MASA.ViewModels.Pages.HackerNews
 
         private async Task ExecuteRefreshCommentsAsync()
         {
-            var comments = await _hackerNewsService.GetCommentsAsync(Story.StoryModel);
-            var orderedComments =
-                comments.Where(comment => !comment.Deleted)
-                    .OrderBy(comment => comment.ParentId)
-                    .ThenBy(comment => comment.Level);
-
-            Comments = new ObservableCollection<CommentModel>(orderedComments);
+            await ExecuteWithProgressDialogAsync(async (token) =>
+            {
+                var comments = await _hackerNewsService.GetCommentsAsync(Story.StoryModel);
+                var orderedComments =
+                    comments.Where(comment => !comment.Deleted);
+                Comments = new ObservableCollection<CommentModel>(orderedComments);
+            }, ActivePageCancellationTokenSource.Token);
         }
 
         private void ExecuteNavigateToStory(StoryModel storyModel)

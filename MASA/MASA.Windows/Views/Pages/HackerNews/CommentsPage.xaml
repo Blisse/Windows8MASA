@@ -13,42 +13,32 @@
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=CommentsPage}">
     
-    <pages:BaseViewModelPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Views/Resources/ApplicationStyles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            
-        </ResourceDictionary>
-    </pages:BaseViewModelPage.Resources>
-
     <Grid Background="#222222">
-        <Grid Margin="15, 40, 15, 105">
+        <Grid Margin="15, 40">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
+            <ProgressBar HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0,0,10"
+                                IsIndeterminate="{Binding IsLoading}"
+                                IsEnabled="{Binding IsLoading}"
+                                Background="#222222"
+                                Style="{StaticResource ThemedProgressBarStyle}"/>
             
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
                 <Button Grid.Column="0" Margin="39,0" Command="{Binding ElementName=self, Path=NavigationHelper.GoBackCommand}"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"
                         VerticalAlignment="Center"
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-                
+
                 <Grid Grid.Column="1">
-                    <ProgressBar Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,0,0,10"
-                                IsIndeterminate="{Binding IsLoading}"
-                                IsEnabled="{Binding IsLoading}"
-                                Background="#222222"
-                                Style="{StaticResource ThemedProgressBarStyle}"/>
-                    
                     <controls:TitleControl PageName="Comments"/>
                 </Grid>
             </Grid>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Web.Http;
@@ -83,29 +84,27 @@ namespace MASA.Services.Implementations.HackerNews
             return stories;
         }
 
-        public async Task<List<CommentModel>> GetCommentsAsync(CommentModel parentComment, int level = 1)
+        private async Task<List<CommentModel>> GetCommentsAsync(List<int> commentIds, int level = 0)
         {
-            Debug.Assert(parentComment != null);
-
-            List<int> ids = parentComment.Comments;
-            JToken[] jsonComments = await Task.WhenAll(ids.Select(GetResponseForIdAsync));
-
             List<CommentModel> comments = new List<CommentModel>();
-            foreach (JToken jsonStory in jsonComments.Where(j => j.HasValues))
+
+            Barrier barrier = new Barrier(commentIds.Count);
+            foreach (int id in commentIds)
             {
-                if ("comment".Equals(jsonStory.Value<String>("type")))
+                JToken jsonComment = await GetResponseForIdAsync(id);
+                if (jsonComment.HasValues && "comment".Equals(jsonComment.Value<String>("type")))
                 {
-                    JToken kids = jsonStory["kids"] ?? JToken.FromObject(new List<int>());
-                    long unixSeconds = jsonStory.Value<long>("time");
+                    JToken kids = jsonComment["kids"] ?? JToken.FromObject(new List<int>());
+                    long unixSeconds = jsonComment.Value<long>("time");
 
                     CommentModel comment;
-                    if (jsonStory["deleted"] != null)
+                    if (jsonComment["deleted"] != null)
                     {
                         comment = new CommentModel
                         {
                             Deleted = true,
-                            Id = jsonStory.Value<int>("id"),
-                            ParentId = jsonStory.Value<int>("parent"),
+                            Id = jsonComment.Value<int>("id"),
+                            ParentId = jsonComment.Value<int>("parent"),
                             Level = level,
                             Comments = kids.ToObject<List<int>>(),
                             CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
@@ -116,27 +115,70 @@ namespace MASA.Services.Implementations.HackerNews
                         comment = new CommentModel
                         {
                             Deleted = false,
-                            Id = jsonStory.Value<int>("id"),
-                            ParentId = jsonStory.Value<int>("parent"),
+                            Id = jsonComment.Value<int>("id"),
+                            ParentId = jsonComment.Value<int>("parent"),
                             Level = level,
                             Comments = kids.ToObject<List<int>>(),
-                            Author = jsonStory.Value<String>("by"),
+                            Author = jsonComment.Value<String>("by"),
                             CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
-                            Text = jsonStory.Value<String>("text")
+                            Text = jsonComment.Value<String>("text")
                         };
                     }
-
                     comments.Add(comment);
+
+                    List<CommentModel> innerComments = await GetCommentsAsync(comment, level);
+                    comments.AddRange(innerComments);
                 }
             }
+//
+//            foreach (JToken jsonStory in jsonComments.Where(j => j.HasValues 
+//                && "comment".Equals(j.Value<String>("type"))))
+//            {
+//                JToken kids = jsonStory["kids"] ?? JToken.FromObject(new List<int>());
+//                long unixSeconds = jsonStory.Value<long>("time");
+//
+//                CommentModel comment;
+//                if (jsonStory["deleted"] != null)
+//                {
+//                    comment = new CommentModel
+//                    {
+//                        Deleted = true,
+//                        Id = jsonStory.Value<int>("id"),
+//                        ParentId = jsonStory.Value<int>("parent"),
+//                        Level = level,
+//                        Comments = kids.ToObject<List<int>>(),
+//                        CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
+//                    };
+//                }
+//                else
+//                {
+//                    comment = new CommentModel
+//                    {
+//                        Deleted = false,
+//                        Id = jsonStory.Value<int>("id"),
+//                        ParentId = jsonStory.Value<int>("parent"),
+//                        Level = level,
+//                        Comments = kids.ToObject<List<int>>(),
+//                        Author = jsonStory.Value<String>("by"),
+//                        CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
+//                        Text = jsonStory.Value<String>("text")
+//                    };
+//                }
+//                comments.Add(comment);
+//
+//                List<CommentModel> innerComments = await GetCommentsAsync(comment, level);
+//                comments.AddRange(innerComments);
+//            }
 
-            List<CommentModel>[] innerComments =
-                await Task.WhenAll(comments.Select(async comment => await GetCommentsAsync(comment, level + 1)));
+            return comments;
+        }
 
-            foreach (List<CommentModel> commentModels in innerComments)
-            {
-                comments.AddRange(commentModels);
-            }
+        public async Task<List<CommentModel>> GetCommentsAsync(CommentModel parentComment, int level = 1)
+        {
+            Debug.Assert(parentComment != null);
+
+            List<int> ids = parentComment.Comments;
+            List<CommentModel> comments = await GetCommentsAsync(ids, level + 1);
 
             return comments;
         }
@@ -146,55 +188,7 @@ namespace MASA.Services.Implementations.HackerNews
             Debug.Assert(story != null);
 
             List<int> ids = story.Comments;
-            JToken[] jsonComments = await Task.WhenAll(ids.Select(GetResponseForIdAsync));
-
-            List<CommentModel> comments = new List<CommentModel>();
-            foreach (JToken jsonStory in jsonComments.Where(j => j.HasValues))
-            {
-                if ("comment".Equals(jsonStory.Value<String>("type")))
-                {
-                    JToken kids = jsonStory["kids"] ?? JToken.FromObject(new List<int>());
-                    long unixSeconds = jsonStory.Value<long>("time");
-
-                    CommentModel comment;
-                    if (jsonStory["deleted"] != null)
-                    {
-                        comment = new CommentModel
-                        {
-                            Deleted = true,
-                            Id = jsonStory.Value<int>("id"),
-                            ParentId = jsonStory.Value<int>("parent"),
-                            Level = 0,
-                            Comments = kids.ToObject<List<int>>(),
-                            CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
-                        };
-                    }
-                    else
-                    {
-                        comment = new CommentModel
-                        {
-                            Deleted = false,
-                            Id = jsonStory.Value<int>("id"),
-                            ParentId = jsonStory.Value<int>("parent"),
-                            Level = 0,
-                            Comments = kids.ToObject<List<int>>(),
-                            Author = jsonStory.Value<String>("by"),
-                            CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
-                            Text = jsonStory.Value<String>("text")
-                        };
-                    }
-
-                    comments.Add(comment);
-                }
-            }
-
-            List<CommentModel>[] innerComments =
-                await Task.WhenAll(comments.Select(async comment => await GetCommentsAsync(comment)));
-
-            foreach (List<CommentModel> commentModels in innerComments)
-            {
-                comments.AddRange(commentModels);
-            }
+            List<CommentModel> comments = await GetCommentsAsync(ids);
 
             return comments;
         }

@@ -11,8 +11,8 @@
     d:DesignWidth="800">
     
     <Grid>
-        <TextBlock FontSize="80" FontWeight="Black" Padding="20,25">
-            <Run Text="HACKER" Foreground="#FF9900"/>
+        <TextBlock FontSize="80" FontWeight="SemiBold" Padding="20,25">
+            <Run Text="Hacker" Foreground="#FF9900"/>
             <Run Text="{Binding ElementName=self, Path=PageName}" Foreground="#F8F8F8"/>
         </TextBlock>
     </Grid>
