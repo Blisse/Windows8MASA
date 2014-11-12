@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage.Streams;
 using Windows.Web.Http;
 using MASA.Common.Utilities;
 using MASA.DataModel.HackerNews;
@@ -86,12 +81,12 @@ namespace MASA.Services.Implementations.HackerNews
 
         private async Task<List<CommentModel>> GetCommentsAsync(List<int> commentIds, int level = 0)
         {
-            List<CommentModel> comments = new List<CommentModel>();
+            List<Task<JToken>> tasks = commentIds.Select(GetResponseForIdAsync).ToList();
+            Dictionary<CommentModel, Task<List<CommentModel>>> innerDictionary = new Dictionary<CommentModel, Task<List<CommentModel>>>();
 
-            Barrier barrier = new Barrier(commentIds.Count);
-            foreach (int id in commentIds)
+            Parallel.ForEach(tasks, async task =>
             {
-                JToken jsonComment = await GetResponseForIdAsync(id);
+                JToken jsonComment = await task;
                 if (jsonComment.HasValues && "comment".Equals(jsonComment.Value<String>("type")))
                 {
                     JToken kids = jsonComment["kids"] ?? JToken.FromObject(new List<int>());
@@ -124,12 +119,66 @@ namespace MASA.Services.Implementations.HackerNews
                             Text = jsonComment.Value<String>("text")
                         };
                     }
-                    comments.Add(comment);
 
-                    List<CommentModel> innerComments = await GetCommentsAsync(comment, level);
-                    comments.AddRange(innerComments);
+                    lock (innerDictionary)
+                    {
+                        innerDictionary.Add(comment, GetCommentsAsync(comment, level));
+                    }
                 }
+            });
+
+            await Task.WhenAll(tasks);
+            await Task.WhenAll(innerDictionary.Values);
+            
+            List<CommentModel> comments = new List<CommentModel>();
+            foreach (var kv in innerDictionary)
+            {
+                comments.Add(kv.Key);
+                comments.AddRange(kv.Value.Result);
             }
+            
+//
+//            foreach (int id in commentIds)
+//            {
+//                JToken jsonComment = await GetResponseForIdAsync(id);
+//                if (jsonComment.HasValues && "comment".Equals(jsonComment.Value<String>("type")))
+//                {
+//                    JToken kids = jsonComment["kids"] ?? JToken.FromObject(new List<int>());
+//                    long unixSeconds = jsonComment.Value<long>("time");
+//
+//                    CommentModel comment;
+//                    if (jsonComment["deleted"] != null)
+//                    {
+//                        comment = new CommentModel
+//                        {
+//                            Deleted = true,
+//                            Id = jsonComment.Value<int>("id"),
+//                            ParentId = jsonComment.Value<int>("parent"),
+//                            Level = level,
+//                            Comments = kids.ToObject<List<int>>(),
+//                            CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
+//                        };
+//                    }
+//                    else
+//                    {
+//                        comment = new CommentModel
+//                        {
+//                            Deleted = false,
+//                            Id = jsonComment.Value<int>("id"),
+//                            ParentId = jsonComment.Value<int>("parent"),
+//                            Level = level,
+//                            Comments = kids.ToObject<List<int>>(),
+//                            Author = jsonComment.Value<String>("by"),
+//                            CreateTime = DateTimeOffsetUtility.DateTimeFromUnixTimeStamp(unixSeconds),
+//                            Text = jsonComment.Value<String>("text")
+//                        };
+//                    }
+//                    comments.Add(comment);
+//
+//                    List<CommentModel> innerComments = await GetCommentsAsync(comment, level);
+//                    comments.AddRange(innerComments);
+//                }
+//            }
 //
 //            foreach (JToken jsonStory in jsonComments.Where(j => j.HasValues 
 //                && "comment".Equals(j.Value<String>("type"))))

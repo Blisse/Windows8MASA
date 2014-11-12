@@ -36,7 +36,7 @@ namespace MASA.ViewModels.Pages
             }
         }
 
-        protected async Task ExecuteWithProgressDialogAsync(Func<CancellationToken, Task> asyncFunc, CancellationToken pageExitCancellationToken)
+        protected async Task ExecuteWithProgressDialogAsync(Func<CancellationToken, Task> asyncFunc, CancellationToken pageInactivatedCancellationToken)
         {
             await UiDispatchService.DispatchOnUiThread(async () =>
             {
@@ -59,41 +59,46 @@ namespace MASA.ViewModels.Pages
                 try
                 {
                     var timeOutCancellationTokenSource = new CancellationTokenSource();
-                    var invokeTask = asyncFunc.Invoke(timeOutCancellationTokenSource.Token);
+                    var linkedCancellationTokenSource =
+                        CancellationTokenSource.CreateLinkedTokenSource(timeOutCancellationTokenSource.Token,
+                            pageInactivatedCancellationToken);
 
-                    if (pageExitCancellationToken.IsCancellationRequested)
+                    var invokeTask = asyncFunc.Invoke(linkedCancellationTokenSource.Token);
+                    if (pageInactivatedCancellationToken.IsCancellationRequested)
                     {
                         timeOutCancellationTokenSource.Cancel();
-                        pageExitCancellationToken.ThrowIfCancellationRequested();
+                        pageInactivatedCancellationToken.ThrowIfCancellationRequested();
                     }
 
-                    await Task.WhenAny(Task.Delay(250, pageExitCancellationToken), invokeTask);
+                    await Task.WhenAny(Task.Delay(5 * 100, pageInactivatedCancellationToken), invokeTask);
+                    if (pageInactivatedCancellationToken.IsCancellationRequested)
+                    {
+                        timeOutCancellationTokenSource.Cancel();
+                        pageInactivatedCancellationToken.ThrowIfCancellationRequested();
+                    }
 
                     if (!invokeTask.IsCompleted)
                     {
                         dialogService.ShowProgressDialog();
                     }
 
-                    if (pageExitCancellationToken.IsCancellationRequested)
+                    await Task.WhenAny(Task.Delay(10 * 1000, pageInactivatedCancellationToken), invokeTask);
+                    if (pageInactivatedCancellationToken.IsCancellationRequested)
                     {
                         timeOutCancellationTokenSource.Cancel();
-                        pageExitCancellationToken.ThrowIfCancellationRequested();
+                        pageInactivatedCancellationToken.ThrowIfCancellationRequested();
                     }
-
-                    await Task.WhenAny(Task.Delay(8000, pageExitCancellationToken), invokeTask);
 
                     if (invokeTask.IsFaulted)
                     {
                         throw invokeTask.Exception.InnerException;
                     }
-
                 }
                 finally
                 {
                     dialogService.CloseProgressDialog();
                 }
             });
-
         }
 
         protected IDialogService DialogService

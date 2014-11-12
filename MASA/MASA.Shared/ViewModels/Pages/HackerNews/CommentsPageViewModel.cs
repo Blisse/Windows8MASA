@@ -87,11 +87,12 @@ namespace MASA.ViewModels.Pages.HackerNews
 
         private async Task ExecuteRefreshCommentsAsync()
         {
-            await ExecuteWithProgressDialogAsync(async (token) =>
+            await ExecuteWithProgressDialogAsync(async token =>
             {
                 var comments = await _hackerNewsService.GetCommentsAsync(Story.StoryModel);
-                var orderedComments =
-                    comments.Where(comment => !comment.Deleted);
+                var orderedComments = comments.Where(comment => !comment.Deleted);
+
+                token.ThrowIfCancellationRequested();
                 Comments = new ObservableCollection<CommentModel>(orderedComments);
             }, ActivePageCancellationTokenSource.Token);
         }
