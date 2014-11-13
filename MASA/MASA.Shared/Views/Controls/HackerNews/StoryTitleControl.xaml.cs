@@ -16,37 +16,38 @@ using Windows.UI.Xaml.Navigation;
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 using GalaSoft.MvvmLight.Command;
 using MASA.DataModel.HackerNews;
+using MASA.ViewModels.Pages.HackerNews;
 
 namespace MASA.Views.Controls.HackerNews
 {
     public sealed partial class StoryTitleControl : UserControl
     {
-        private static readonly DependencyProperty StoryProperty = DependencyProperty.Register("Story", typeof(StoryModel),
+        private static readonly DependencyProperty StoryProperty = DependencyProperty.Register("Story", typeof(StoryViewModel),
             typeof(StoryTitleControl), new PropertyMetadata(null));
 
-        public StoryModel Story
+        public StoryViewModel Story
         {
-            get { return (StoryModel)GetValue(StoryProperty); }
+            get { return (StoryViewModel)GetValue(StoryProperty); }
             set { SetValue(StoryProperty, value); }
         }
 
         private static readonly DependencyProperty CommentCommandProperty = DependencyProperty.Register(
-            "CommentCommand", typeof (RelayCommand<StoryModel>),
+            "CommentCommand", typeof(RelayCommand<StoryViewModel>),
             typeof (StoryTitleControl), new PropertyMetadata(null));
 
-        public RelayCommand<StoryModel> CommentCommand
+        public RelayCommand<StoryViewModel> CommentCommand
         {
-            get { return (RelayCommand<StoryModel>)GetValue(CommentCommandProperty); }
+            get { return (RelayCommand<StoryViewModel>)GetValue(CommentCommandProperty); }
             set { SetValue(CommentCommandProperty, value); }
         }
 
         private static readonly DependencyProperty CommentCommandParameterProperty =
-            DependencyProperty.Register("CommentCommandParameter", typeof (StoryModel),
+            DependencyProperty.Register("CommentCommandParameter", typeof(StoryViewModel),
                 typeof (StoryTitleControl), new PropertyMetadata(null));
 
-        public StoryModel CommentCommandParameter
+        public StoryViewModel CommentCommandParameter
         {
-            get { return (StoryModel)GetValue(CommentCommandParameterProperty); }
+            get { return (StoryViewModel)GetValue(CommentCommandParameterProperty); }
             set { SetValue(CommentCommandParameterProperty, value); }
         }
 

@@ -275,7 +275,7 @@
                              Style="{StaticResource ThemedProgressBarStyle}"/>
                 <controls:TitleControl PageName="Story"/>
             </Grid>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Margin="20,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -285,8 +285,14 @@
                     <ListView ItemContainerStyle="{StaticResource TransparentCheckMarkListViewItemStyle}"
                               SelectionMode="None">
                         <ListViewItem>
-                            <Grid Margin="0,15">
-                                <controls:StoryTitleControl Story="{Binding Story.StoryModel}"/>
+                            <Grid Margin="0,5">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Tapped">
+                                        <core:InvokeCommandAction Command="{Binding Source={StaticResource ViewModelLocator}, Path=StoryPage.NavigateToCommentsCommand}" 
+                                                                  CommandParameter="{Binding Story}"/>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                                <controls:StoryTitleControl Story="{Binding Story}"/>
                             </Grid>
                         </ListViewItem>
                     </ListView>

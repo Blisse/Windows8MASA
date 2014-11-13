@@ -29,7 +29,7 @@ namespace MASA.ViewModels.Pages.HackerNews
         #region Properties
         
         public AwaitableDelegateCommand RefreshCommentsCommand { get; set; }
-        public RelayCommand<StoryModel> NavigateToStoryCommand { get; set; }
+        public RelayCommand<StoryViewModel> NavigateToStoryCommand { get; set; }
 
         public StoryViewModel Story
         {
@@ -75,7 +75,7 @@ namespace MASA.ViewModels.Pages.HackerNews
             _hackerNewsService = hackerNewsService;
 
             RefreshCommentsCommand = new AwaitableDelegateCommand(ExecuteRefreshCommentsAsync, CanExecuteRefreshComments);
-            NavigateToStoryCommand = new RelayCommand<StoryModel>(ExecuteNavigateToStory);
+            NavigateToStoryCommand = new RelayCommand<StoryViewModel>(ExecuteNavigateToStory);
         }
 
         private bool CanExecuteRefreshComments()
@@ -97,7 +97,7 @@ namespace MASA.ViewModels.Pages.HackerNews
             }, ActivePageCancellationTokenSource.Token);
         }
 
-        private void ExecuteNavigateToStory(StoryModel storyModel)
+        private void ExecuteNavigateToStory(StoryViewModel storyModel)
         {
             NavigationService.Navigate(typeof(StoryPageViewModel), storyModel);
         }
@@ -110,9 +110,9 @@ namespace MASA.ViewModels.Pages.HackerNews
         {
             base.LoadState(e);
 
-            if (e.NavigationParameter != null && e.NavigationParameter as StoryModel != null)
+            if (e.NavigationParameter != null && e.NavigationParameter as StoryViewModel != null)
             {
-                Story = StoryViewModel.ViewModelFromModel(e.NavigationParameter as StoryModel);
+                Story = e.NavigationParameter as StoryViewModel;
 
                 await RefreshCommentsCommand.ExecuteAsync(null);
             }
@@ -125,6 +125,9 @@ namespace MASA.ViewModels.Pages.HackerNews
         public override void SaveState(SaveStateEventArgs e)
         {
             base.SaveState(e);
+
+            Story = null;
+            Comments = null;
         }
 
         #endregion

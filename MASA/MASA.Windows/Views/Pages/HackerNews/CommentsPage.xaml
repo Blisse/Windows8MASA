@@ -51,14 +51,14 @@
                     <ListView ItemContainerStyle="{StaticResource TransparentCheckMarkListViewItemStyle}"
                               SelectionMode="None">
                         <ListViewItem>
-                            <Grid Margin="0,15">
+                            <Grid Margin="0,5">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Tapped">
                                         <core:InvokeCommandAction Command="{Binding Source={StaticResource ViewModelLocator}, Path=CommentsPage.NavigateToStoryCommand}" 
-                                                                  CommandParameter="{Binding Story.StoryModel}"/>
+                                                                  CommandParameter="{Binding Story}"/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
-                                <controls:StoryTitleControl Story="{Binding Story.StoryModel}"/>
+                                <controls:StoryTitleControl Story="{Binding Story}"/>
                             </Grid>
                         </ListViewItem>
                     </ListView>

@@ -175,7 +175,12 @@ namespace MASA.Views.Pages
         {
             if (UiDispatcher != null)
             {
-                await UiDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await asyncUiAction.Invoke());
+                Task task = asyncUiAction.Invoke();
+                if (task.Status == TaskStatus.Created)
+                {
+                    await UiDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await task);
+                }
+
             }
         }
 

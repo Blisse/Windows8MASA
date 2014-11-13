@@ -1,4 +1,6 @@
-﻿using MASA.Common.LifeCycle;
+﻿using System;
+using GalaSoft.MvvmLight.Command;
+using MASA.Common.LifeCycle;
 using MASA.DataModel.HackerNews;
 using MASA.Services.Implementations.HackerNews;
 
@@ -34,11 +36,20 @@ namespace MASA.ViewModels.Pages.HackerNews
             }
         }
 
+        public RelayCommand<StoryViewModel> NavigateToCommentsCommand { get; set; } 
+
         #endregion
 
         public StoryPageViewModel(IHackerNewsService hackerNewsService)
         {
             _hackerNewsService = hackerNewsService;
+
+            NavigateToCommentsCommand = new RelayCommand<StoryViewModel>(ExecuteNavigateToCommentsCommand);
+        }
+
+        private void ExecuteNavigateToCommentsCommand(StoryViewModel storyViewModel)
+        {
+            NavigationService.Navigate(typeof(CommentsPageViewModel), storyViewModel);
         }
 
         #region Command Methods
@@ -53,9 +64,9 @@ namespace MASA.ViewModels.Pages.HackerNews
         {
             base.LoadState(e);
 
-            if (e.NavigationParameter != null && e.NavigationParameter as StoryModel != null)
+            if (e.NavigationParameter != null && e.NavigationParameter as StoryViewModel != null)
             {
-                Story = StoryViewModel.ViewModelFromModel(e.NavigationParameter as StoryModel);
+                Story = e.NavigationParameter as StoryViewModel;
             }
             else
             {

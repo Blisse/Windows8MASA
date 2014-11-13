@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -8,7 +9,6 @@ using MASA.Common.Commands;
 using MASA.Common.LifeCycle;
 using MASA.DataModel.HackerNews;
 using MASA.Services.Implementations.HackerNews;
-using MASA.Services.Interfaces;
 
 namespace MASA.ViewModels.Pages.HackerNews
 {
@@ -225,17 +225,17 @@ namespace MASA.ViewModels.Pages.HackerNews
         #region Fields
 
         private readonly IHackerNewsService _hackerNewsService;
-        private ObservableCollection<StoryModel> _stories = new ObservableCollection<StoryModel>();
+        private ObservableCollection<StoryViewModel> _stories = new ObservableCollection<StoryViewModel>();
 
         #endregion
 
         #region Properties
 
         public AwaitableDelegateCommand RefreshNewsCommand { get; set; }
-        public RelayCommand<StoryModel> NavigateToStoryCommand { get; set; }
-        public RelayCommand<StoryModel> NavigateToCommentsCommand { get; set; }
+        public RelayCommand<StoryViewModel> NavigateToStoryCommand { get; set; }
+        public RelayCommand<StoryViewModel> NavigateToCommentsCommand { get; set; }
 
-        public ObservableCollection<StoryModel> Stories
+        public ObservableCollection<StoryViewModel> Stories
         {
             get
             {
@@ -261,8 +261,8 @@ namespace MASA.ViewModels.Pages.HackerNews
             _hackerNewsService = hackerNewsService;
 
             RefreshNewsCommand = new AwaitableDelegateCommand(ExecuteRefreshNewsAsync, CanExecuteRefreshNews);
-            NavigateToStoryCommand = new RelayCommand<StoryModel>(ExecuteNavigateToStory);
-            NavigateToCommentsCommand = new RelayCommand<StoryModel>(ExecuteNavigateToComments);
+            NavigateToStoryCommand = new RelayCommand<StoryViewModel>(ExecuteNavigateToStory);
+            NavigateToCommentsCommand = new RelayCommand<StoryViewModel>(ExecuteNavigateToComments);
         }
 
         private bool CanExecuteRefreshNews()
@@ -276,12 +276,13 @@ namespace MASA.ViewModels.Pages.HackerNews
         {
             await ExecuteWithProgressDialogAsync(async delegate
             {
-                var topStories = await _hackerNewsService.GetTopStoriesAsync();
-                Stories = new ObservableCollection<StoryModel>(topStories);
+                List<StoryModel> topStories = await _hackerNewsService.GetTopStoriesAsync();
+                IEnumerable<StoryViewModel> filteredTopStories = topStories.Select(StoryViewModel.ViewModelFromModel);
+                Stories = new ObservableCollection<StoryViewModel>(filteredTopStories);
             }, ActivePageCancellationTokenSource.Token);
         }
 
-        private void ExecuteNavigateToStory(StoryModel storyModel)
+        private void ExecuteNavigateToStory(StoryViewModel storyModel)
         {
             if (String.IsNullOrWhiteSpace(storyModel.LinkUrl))
             {
@@ -293,7 +294,7 @@ namespace MASA.ViewModels.Pages.HackerNews
             }
         }
 
-        private void ExecuteNavigateToComments(StoryModel storyModel)
+        private void ExecuteNavigateToComments(StoryViewModel storyModel)
         {
             NavigationService.Navigate(typeof(CommentsPageViewModel), storyModel);
         }
