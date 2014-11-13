@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Html;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using MASA.Common.Commands;
 using MASA.Common.LifeCycle;
 using MASA.DataModel.HackerNews;
