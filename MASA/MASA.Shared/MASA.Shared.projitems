@@ -56,6 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Controls\UsernamePasswordControl.xaml.cs">
       <DependentUpon>UsernamePasswordControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\IntegerStringToLeftMarginConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\ItemClickedEventConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\ObjectToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\PasswordBoxToPasswordStringConverter.cs" />

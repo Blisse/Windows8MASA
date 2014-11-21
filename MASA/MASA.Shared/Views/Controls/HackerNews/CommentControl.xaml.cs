@@ -103,6 +103,7 @@ namespace MASA.Views.Controls.HackerNews
 
                     int closing = text.IndexOf(">", StringComparison.CurrentCulture);
                     String linkUrl = text.Substring(0, closing).Trim('\"');
+                    linkUrl = linkUrl.TrimStart(new[] {'\"'}).Substring(0, linkUrl.IndexOf('\"')-1);
 
                     text = text.Remove(0, closing + ">".Length);
 
