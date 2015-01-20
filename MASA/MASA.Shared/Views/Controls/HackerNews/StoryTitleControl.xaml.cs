@@ -51,6 +51,39 @@ namespace MASA.Views.Controls.HackerNews
             set { SetValue(CommentCommandParameterProperty, value); }
         }
 
+        private static readonly DependencyProperty ShowCommentsProperty = DependencyProperty.Register("ShowComments", typeof(StoryViewModel),
+            typeof(Boolean), new PropertyMetadata(true, ShowCommentsPropertyChanged));
+
+        private static void ShowCommentsPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+        {
+            var storyTitleControl = dependencyObject as StoryTitleControl;
+            if (storyTitleControl != null)
+            {
+                storyTitleControl.ShowCommentsChanged((bool)dependencyPropertyChangedEventArgs.OldValue,
+                    (bool)dependencyPropertyChangedEventArgs.NewValue);
+            }
+        }
+
+        private void ShowCommentsChanged(Boolean oldValue, Boolean newValue)
+        {
+            if (newValue == false)
+            {
+                Delimiter.Visibility = Visibility.Collapsed;
+                CommentsLink.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Delimiter.Visibility = Visibility.Visible;
+                CommentsLink.Visibility = Visibility.Visible;
+            }
+        }
+
+        public Boolean ShowComments
+        {
+            get { return (Boolean)GetValue(ShowCommentsProperty); }
+            set { SetValue(ShowCommentsProperty, value); }
+        }
+
         public StoryTitleControl()
         {
             this.InitializeComponent();

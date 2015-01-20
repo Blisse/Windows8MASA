@@ -19,7 +19,7 @@ namespace MASA.Views.Converters
                 parameterValue = parameterString.Split(new char[] {','}).Select(int.Parse).ToArray();
             }
 
-            int leftMarginValue = Math.Abs(Math.Min((int)value, 7)) * 40 + 5;
+            int leftMarginValue = Math.Abs(Math.Min((int)value, 7)) * 50 + 5;
             parameterValue[0] = leftMarginValue;
             Thickness margin = new Thickness(parameterValue[0], parameterValue[1], parameterValue[2], parameterValue[3]);
             return margin;
