@@ -15,14 +15,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using MASA.Common.LifeCycle;
+using MASA.ViewModels.Pages;
+using MASA.Views.Pages;
+using MASA.Views.Pages.HackerNews;
 using MASA.Common;
 
 // The Universal Hub Application project template is documented at http://go.microsoft.com/fwlink/?LinkID=391955
-using MASA.Common.LifeCycle;
-using MASA.ViewModels.Pages;
 using MASA.ViewModels.Pages.HackerNews;
-using MASA.Views.Pages;
-using MASA.Views.Pages.HackerNews;
 
 namespace MASA
 {

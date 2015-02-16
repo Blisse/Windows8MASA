@@ -307,7 +307,10 @@ namespace MASA.ViewModels.Pages.HackerNews
         {
             base.LoadState(e);
 
-            await RefreshNewsCommand.ExecuteAsync(null);
+            if (!Stories.Any())
+            {
+                await RefreshNewsCommand.ExecuteAsync(null);
+            }
         }
 
         public override void SaveState(SaveStateEventArgs e)

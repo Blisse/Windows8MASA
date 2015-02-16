@@ -12,8 +12,9 @@
     xmlns:controls="using:MASA.Views.Controls.HackerNews"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=CommentsPage}">
+    
     <pages:BaseViewModelPage.Resources>
-        <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
+        <Style x:Key="CommentsListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -82,7 +83,7 @@
                     </ListView>
                 </Grid>
                 <Grid Grid.Row="1">
-                    <ListView ItemsSource="{Binding Comments}" SelectionMode="None" ItemContainerStyle="{StaticResource ListViewItemStyle1}">
+                    <ListView ItemsSource="{Binding Comments}" SelectionMode="None" ItemContainerStyle="{StaticResource CommentsListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="{Binding Converter={StaticResource IntegerStringToLeftMarginConverter}, Path=Level, ConverterParameter=0\,10\,10\,10}">

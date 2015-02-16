@@ -1,8 +1,8 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Command;
 using MASA.Common.LifeCycle;
-using MASA.DataModel.HackerNews;
 using MASA.Services.Implementations.HackerNews;
+using MASA.DataModel.HackerNews;
 
 namespace MASA.ViewModels.Pages.HackerNews
 {

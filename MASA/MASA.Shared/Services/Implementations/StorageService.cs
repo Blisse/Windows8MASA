@@ -17,7 +17,7 @@ namespace MASA.Services.Implementations
             _localFolder = ApplicationData.Current.LocalFolder;
         }
 
-        public async Task CreateOrUpdateData(string key, object o)
+        public async Task CreateOrUpdateLocalData(string key, object o)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace MASA.Services.Implementations
             }
         }
 
-        public async Task<T> GetDataOrDefault<T>(string key, T defaultValue)
+        public async Task<T> GetLocalDataOrDefault<T>(string key, T defaultValue)
         {
             try
             {

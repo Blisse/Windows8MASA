@@ -14,7 +14,7 @@
         /// <param name="key">The key to associate the data with.</param>
         /// <param name="o">The object to save.</param>
         /// <returns></returns>
-        Task CreateOrUpdateData(String key, Object o);
+        Task CreateOrUpdateLocalData(String key, Object o);
 
         /// <summary>
         /// Get the data associated with the key, or return the defaultValue if nothing exists.
@@ -23,7 +23,7 @@
         /// <param name="key">The key associated with the data.</param>
         /// <param name="defaultValue">The value to return if the key does not exist.</param>
         /// <returns>The data associated with the key or the defaultValue.</returns>
-        Task<T> GetDataOrDefault<T>(String key, T defaultValue);
+        Task<T> GetLocalDataOrDefault<T>(String key, T defaultValue);
 
         /// <summary>
         /// Delete the data associated with the key.
