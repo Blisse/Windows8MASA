@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
-using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;

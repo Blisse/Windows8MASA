@@ -6,7 +6,6 @@ namespace MASA.Services.Implementations
     using System.Diagnostics;
     using System.Threading.Tasks;
     using Windows.Storage;
-    using Newtonsoft.Json.Linq;
 
     public class StorageService : IStorageService
     {

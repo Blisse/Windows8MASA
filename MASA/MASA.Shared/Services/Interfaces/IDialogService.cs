@@ -24,34 +24,5 @@
         /// <param name="cancelButtonText">Text on the button dismissing the dialog.</param>
         /// <returns></returns>
         Task ShowCustomMessageDialogAsync(String title, String content, String cancelButtonText);
-
-        /// <summary>
-        /// Present the Log In Failed Message Dialog.
-        /// </summary>
-        /// <returns></returns>
-        Task ShowLogInFailedMessageDialogAsync();
-
-        /// <summary>
-        /// Present the Register User Failed Message Dialog.
-        /// </summary>
-        /// <returns></returns>
-        Task ShowRegisterUserFailedMessageDialogAsync();
-
-        /// <summary>
-        /// Check whether a Progress Dialog is already displayed on the screen. 
-        /// Only one Progress Dialog can be displayed at a time.
-        /// </summary>
-        /// <returns></returns>
-        bool IsProgressDialogOpen();
-
-        /// <summary>
-        /// Show a Progress Dialog.
-        /// </summary>
-        void ShowProgressDialog();
-
-        /// <summary>
-        /// Close the currently shown Progress Dialog.
-        /// </summary>
-        void CloseProgressDialog();
     }
 }

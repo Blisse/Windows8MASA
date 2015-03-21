@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -15,5 +15,38 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\HackerNews\CommentControl.xaml.cs">
+      <DependentUpon>CommentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\HackerNews\StoryTitleControl.xaml.cs">
+      <DependentUpon>StoryTitleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\HackerNews\TitleControl.xaml.cs">
+      <DependentUpon>TitleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\UsernamePasswordControl.xaml.cs">
+      <DependentUpon>UsernamePasswordControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)HackerNews\CommentsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HackerNews\NewsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HackerNews\StoryPageViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\HackerNews\CommentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\HackerNews\StoryTitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\HackerNews\TitleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Controls\UsernamePasswordControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

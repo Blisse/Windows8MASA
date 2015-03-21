@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MASACore.Common.Commands
+namespace MASACore.Core.ViewModels.Commands
 {
     /* RelayCommands and DelegateCommands accept an Execute method of type Action and Action<T>. When we call
      * Command.Execute, because the return type of the Execute method is void, we cannot await it. For Unit

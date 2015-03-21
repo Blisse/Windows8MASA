@@ -1,9 +1,9 @@
-﻿namespace MASACore.Common.Commands
-{
-    using System;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
+namespace MASACore.Core.ViewModels.Commands
+{
     /// <summary>
     /// An <see cref="ICommand"/> whose delegates can be attached for <see cref="Execute"/> and <see cref="CanExecute"/>.
     /// </summary>

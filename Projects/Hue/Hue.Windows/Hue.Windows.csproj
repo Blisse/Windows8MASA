@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>f5cfb481-b597-4193-95df-6c69bbf5b905</ProjectGuid>
+    <ProjectGuid>{808310FD-CFE4-4432-AB9B-C3362536D9AF}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hue</RootNamespace>
@@ -15,9 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    
     <PackageCertificateKeyFile>Hue.Windows_TemporaryKey.pfx</PackageCertificateKeyFile>
-    	
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -108,6 +106,7 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HackerNews\HackerNewsService.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -117,9 +116,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-	
     <None Include="Hue.Windows_TemporaryKey.pfx" />
-        
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />

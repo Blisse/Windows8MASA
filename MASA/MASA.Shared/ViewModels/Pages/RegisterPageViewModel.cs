@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
 using MASA.Common.Commands;
 
 namespace MASA.ViewModels.Pages

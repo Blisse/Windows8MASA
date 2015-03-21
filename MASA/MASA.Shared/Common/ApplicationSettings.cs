@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MASA.Common
+﻿namespace MASA.Common
 {
     public class ApplicationSettings
     {

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
-namespace MASACore.Common.LifeCycle
+namespace MASACore.Core.LifeCycle
 {
     /// <summary>
     /// Class used to hold the event data required when a page attempts to load state.

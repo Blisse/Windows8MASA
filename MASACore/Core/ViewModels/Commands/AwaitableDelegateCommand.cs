@@ -1,9 +1,9 @@
-﻿namespace MASACore.Common.Commands
-{
-    using System;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
+namespace MASACore.Core.ViewModels.Commands
+{
     public class AwaitableDelegateCommand : AwaitableDelegateCommand<object>, IAsyncCommand
     {
         public AwaitableDelegateCommand(Func<Task> executeMethod)
