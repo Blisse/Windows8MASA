@@ -1,88 +1,66 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.IO;
+using System.Threading;
 using Windows.Networking;
 using Windows.Networking.Sockets;
-using Windows.Storage.Streams;
-using JsonRpcModelsLibrary.Annotations;
 using JsonRpcModelsLibrary.Models;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using JsonRpcModelsLibrary.Readers;
-using JsonRpcModelsLibrary.Utilities;
 using Newtonsoft.Json.Linq;
 
 namespace JsonRpcModelsLibrary.Clients
 {
-    public interface IJsonRpcRequest
+    public sealed class JsonRpcClient
     {
-        Object GetContent();
-        String GetCommand();
-    }
-
-    public class Response
-    {
-        public JToken Content { get; set; }
-        public bool IsError { get { return !String.IsNullOrWhiteSpace(Error); } }
-        public String Error { get; set; }
-    }
-
-    public sealed class JsonRpcClient : INotifyPropertyChanged
-    {
-        private bool _isConnected;
-        public bool IsConnected
+        public enum JsonRpcClientStatus
         {
-            get { return _isConnected; }
-            set
-            {
-                if (value == _isConnected)
-                {
-                    return;
-                }
-
-                _isConnected = value;
-                RaisePropertyChanged();
-            }
+            Initialized,
+            Connecting,
+            Connected,
+            Faulted,
+            Stopped
         }
 
-        public readonly String HostName;
-        public readonly String Port;
-        private DataWriter _dataWriter;
-        private StreamSocket _streamSocket;
-        private readonly ConcurrentQueue<StreamCommand> _sendToClientQueue;
-        private readonly ConcurrentDictionary<String, TaskCompletionSource<Response>> _incompleteJsonRpcRequests;
-        private readonly Dictionary<String, Func<JToken, Task<Response>>> _subscribedRequestCallbacks;
-        private readonly Dictionary<String, Action<JToken>> _subscribedNotificationCallbacks;
+        public JsonRpcClientStatus Status { get; private set; }
+        public String HostName { get; private set; }
+        public String Port { get; private set; }
 
-        /// <summary>
-        /// Create a new JsonRpcClient, binding the client to a specific host IP and port number
-        /// </summary>
-        /// <param name="host">Host IP Address</param>
-        /// <param name="port">Port to connect to</param>
-        public JsonRpcClient(String host, String port)
+        private StreamSocket _streamSocket;
+        private Task _readStreamTask;
+        private Task _writeStreamTask;
+        private readonly CancellationTokenSource _connectionCancellationTokenSource;
+        private readonly ConcurrentQueue<StreamContent> _outgoingJsonRpcRequests;
+        private readonly ConcurrentDictionary<String, TaskCompletionSource<JsonRpcResponse>> _incompleteJsonRpcRequests;
+
+        public JsonRpcClient()
         {
+            Status = JsonRpcClientStatus.Initialized;
+
+            _connectionCancellationTokenSource = new CancellationTokenSource();
+            _outgoingJsonRpcRequests = new ConcurrentQueue<StreamContent>();
+            _incompleteJsonRpcRequests = new ConcurrentDictionary<String, TaskCompletionSource<JsonRpcResponse>>();
+        }
+
+        public async Task ConnectAsync(String host, String port)
+        {
+            await CloseAsync();
+
             HostName = host;
             Port = port;
 
-            _sendToClientQueue = new ConcurrentQueue<StreamCommand>();
-            _incompleteJsonRpcRequests = new ConcurrentDictionary<String, TaskCompletionSource<Response>>();
-            _subscribedRequestCallbacks = new Dictionary<String, Func<JToken, Task<Response>>>();
-            _subscribedNotificationCallbacks = new Dictionary<String, Action<JToken>>();
+            _streamSocket = new StreamSocket();
+            await _streamSocket.ConnectAsync(new HostName(HostName), Port);
 
-            IsConnected = false;
+            CancellationToken token = _connectionCancellationTokenSource.Token;
+
+            _readStreamTask = Task.Run(() => ReadJsonRpcStreamAsync(token), token);
+            _writeStreamTask = Task.Run(() => WriteJsonRpcStreamAsync(token), token);   
         }
 
-        /// <summary>
-        /// Establish a connection to the Host and Port, setting IsConnected to true if the connection is successful.
-        /// This does not start the service.
-        /// </summary>
-        /// <returns></returns>
-        public async Task ConnectAsync()
+        public async Task CloseAsync()
         {
-            try
+            if (Status != JsonRpcClientStatus.Initialized)
             {
                 if (_streamSocket != null)
                 {
@@ -90,197 +68,111 @@ namespace JsonRpcModelsLibrary.Clients
                     _streamSocket = null;
                 }
 
-                _streamSocket = new StreamSocket();
-                await _streamSocket.ConnectAsync(new HostName(HostName), Port);
-
-                _dataWriter = new DataWriter(_streamSocket.OutputStream);
-
-                IsConnected = true;
+                _connectionCancellationTokenSource.Cancel();
+                await Task.WhenAll(_readStreamTask, _writeStreamTask);
+                _readStreamTask = null;
+                _writeStreamTask = null;
             }
-            catch (Exception e)
+        }
+
+        public async Task<JsonRpcResponse> SendRequestAsync(JsonRpcRequest jsonRpcRequest)
+        {
+            Debug.Assert(jsonRpcRequest != null && jsonRpcRequest.Id != null && jsonRpcRequest.Id != String.Empty);
+
+            JTokenStreamContent streamContent = new JTokenStreamContent(JToken.FromObject(jsonRpcRequest));
+            TaskCompletionSource<JsonRpcResponse> sendJsonRpcRequestTask = new TaskCompletionSource<JsonRpcResponse>(jsonRpcRequest);
+            _outgoingJsonRpcRequests.Enqueue(streamContent);
+            _incompleteJsonRpcRequests.AddOrUpdate(jsonRpcRequest.Id, sendJsonRpcRequestTask, (k, v) =>
             {
-                Debug.WriteLine("Caught exception: {0}", e);
-            }
+                Debug.Assert(false, "Should not send requests with the same id.");
+                return sendJsonRpcRequestTask;
+            });
+            return await sendJsonRpcRequestTask.Task;
         }
 
-        /// <summary>
-        /// Start receiving and sending messages. No action will occur until this method is called.
-        /// </summary>
-        public void Start()
+        public void SendNotificationAsync(JsonRpcRequest jsonRpcRequest)
         {
-            var receiveMessagesTask = Task.Run(() => ReceiveMessagesFromClientAsync());
-            var sendMessagesTask = Task.Run(() => SendQueuedMessagesToClientAsync());   
+            Debug.Assert(jsonRpcRequest != null && jsonRpcRequest.Id != null && jsonRpcRequest.Id != String.Empty);
+            Debug.Assert(jsonRpcRequest.IsNotification == true);
+
+            JTokenStreamContent streamContent = new JTokenStreamContent(JToken.FromObject(jsonRpcRequest));
+            _outgoingJsonRpcRequests.Enqueue(streamContent);
         }
 
-        /// <summary>
-        /// Stop receiving and sending messages. Messages not sent yet will still be queued.
-        /// </summary>
-        public void Stop()
+        private async Task ReadJsonRpcStreamAsync(CancellationToken token)
         {
-            IsConnected = false;
-        }
-
-        public Task<Response> SendRequestAsync(IJsonRpcRequest userJsonRpcRequest)
-        {
-            var jsonRpcRequest = JsonRpcRequest.Factory.CreateJsonRpcRequest(userJsonRpcRequest.GetCommand(), userJsonRpcRequest.GetContent());
-            var jsonRpcJObject = JObject.FromObject(jsonRpcRequest);
-            var streamCommand = JObjectStreamCommand.Factory.Create(jsonRpcJObject);
-
-            var requestTaskCompletionSource = new TaskCompletionSource<Response>();
-
-            _sendToClientQueue.Enqueue(streamCommand);
-
-            if (!_incompleteJsonRpcRequests.TryAdd(jsonRpcRequest.Id, requestTaskCompletionSource))
-            {
-                // this shouldn't throw
-                throw new Exception();
-            }
-
-            return requestTaskCompletionSource.Task;
-        }
-
-        public void SendNotification(String command, Object content)
-        {
-            var jsonRpcRequest = JsonRpcRequest.Factory.CreateJsonRpcNotification(command, content);
-            var jsonRpcJObject = JObject.FromObject(jsonRpcRequest);
-            var streamCommand = JObjectStreamCommand.Factory.Create(jsonRpcJObject);
-
-            _sendToClientQueue.Enqueue(streamCommand);
-        }
-
-        public void SubscribeForRequests(String command, Func<JToken, Task<Response>> requestCallback)
-        {
-            _subscribedRequestCallbacks.Add(command, requestCallback);
-        }
-
-        public void SubscribeForNotifications(String command, Action<Object> notificationCallback)
-        {
-            _subscribedNotificationCallbacks.Add(command, notificationCallback);
-        }
-
-        private async Task ReceiveMessagesFromClientAsync()
-        {
+            JsonRpcReader reader = new JsonRpcReader(_streamSocket.InputStream.AsStreamForRead());
             try
             {
-                IJsonReader reader = new JsonBracketReader(_streamSocket.InputStream.AsStreamForRead());
-
-                while (IsConnected)
+                while (!token.IsCancellationRequested)
                 {
-                    var streamJObject = await reader.ReadJObjectAsync();
-                    HandleReceivedJObject(streamJObject);
+                    JToken streamJObject = await reader.ReadJsonRpcObjectAsync(token);
+                    if (streamJObject["method"] != null) // always true for requests
+                    {
+                        JsonRpcRequest request = streamJObject.ToObject<JsonRpcRequest>();
+
+                    }
+                    else // response
+                    {
+                        JsonRpcResponse response = streamJObject.ToObject<JsonRpcResponse>();
+                        _incompleteJsonRpcRequests[response.Id].SetResult(response);
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (IOException ioException)
+            {
+                // occurs when stream timeouts (not disconnected properly)
+                Debug.WriteLine("Caught and handling exception: {0}", ioException);
+                Status = JsonRpcClientStatus.Faulted;
+            }
+
+            if (Status == JsonRpcClientStatus.Faulted)
+            {
+                await ConnectAsync(HostName, Port);
+            }
+            else
+            {
+                Status = JsonRpcClientStatus.Stopped;
+            }
+        }
+
+        private async Task WriteJsonRpcStreamAsync(CancellationToken token)
+        {
+            JsonRpcWriter writer = new JsonRpcWriter(_streamSocket.OutputStream.AsStreamForWrite());
+            StreamContent content = null;
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    if (_outgoingJsonRpcRequests.TryDequeue(out content))
+                    {
+                        await writer.WriteJsonRpcObjectAsync(content, token);
+                    }
+                    
+                    await Task.Delay(400, token);
+                }
+            }
+            catch (OperationCanceledException)
+            {
             }
             catch (IOException ioException)
             {
                 // occurs when stream timeouts (not disconnected)
                 Debug.WriteLine("Caught and handling exception: {0}", ioException);
-                HandleStreamClosed(ReceiveMessagesFromClientAsync);
+                Status = JsonRpcClientStatus.Faulted;
             }
-            catch (Exception e)
+
+            if (Status == JsonRpcClientStatus.Faulted)
             {
-                Debug.WriteLine("Caught exception: {0}", e);
-                IsConnected = false;
+                await ConnectAsync(HostName, Port);
             }
-        }
-
-        private async Task SendQueuedMessagesToClientAsync()
-        {
-            StreamCommand command = null;
-
-            try
+            else
             {
-                while (IsConnected)
-                {
-                    if (_sendToClientQueue.TryDequeue(out command))
-                    {
-                        _dataWriter.WriteUInt32(command.ContentLength);
-                        _dataWriter.WriteBytes(command.ContentBytes);
-                        await _dataWriter.StoreAsync();
-                    }
-                    else
-                    {
-                        await Task.Delay(250);
-                    }
-                }
+                Status = JsonRpcClientStatus.Stopped;
             }
-            catch (IOException ioException)
-            {
-                // occurs when stream timeouts (not disconnected)
-                Debug.WriteLine("Caught and handling exception: {0}", ioException);
-                if (command != null)
-                {
-                    // re-queue command to try sending again
-                    _sendToClientQueue.Enqueue(command);
-                }
-                HandleStreamClosed(SendQueuedMessagesToClientAsync);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Caught exception: {0}", e);
-                IsConnected = false;
-            }
-        }
-
-        private async void HandleStreamClosed(Func<Task> taskToRestart)
-        {
-            await ConnectAsync();
-            var restartTask = Task.Run(() => taskToRestart);
-        }
-
-        private async void HandleReceivedJObject(JObject jObject)
-        {
-            if (jObject.IsJsonRpcRequest())
-            {
-                JsonRpcRequest jsonRpcRequest = jObject.ToObject<JsonRpcRequest>();
-                String method = jsonRpcRequest.Method;
-
-                if (jsonRpcRequest.IsNotification)
-                {
-                    if (_subscribedNotificationCallbacks.ContainsKey(method))
-                    {
-                        _subscribedNotificationCallbacks[method].Invoke(jsonRpcRequest.Params);
-                    }
-                }
-                else
-                {
-                    if (_subscribedRequestCallbacks.ContainsKey(method))
-                    {
-                        Response response = await _subscribedRequestCallbacks[method].Invoke(jsonRpcRequest.Params);
-                        JsonRpcResponse jsonRpcResponse = JsonRpcResponse.Factory.CreateJsonRpcResponse(jsonRpcRequest, response);
-                        StreamCommand responseCommand = JObjectStreamCommand.Factory.Create(JObject.FromObject(jsonRpcResponse));
-                        _sendToClientQueue.Enqueue(responseCommand);
-                    }
-                }
-            }
-            else if (jObject.IsJsonRpcResponse())
-            {
-                JsonRpcResponse jsonRpcResponse = jObject.ToObject<JsonRpcResponse>();
-                TaskCompletionSource<Response> requestTaskCompletionSource;
-
-                if (_incompleteJsonRpcRequests.TryGetValue(jsonRpcResponse.Id, out requestTaskCompletionSource))
-                {
-                    Response response = new Response();
-                    if (jObject.IsErrorJsonRpcResponse())
-                    {
-                        response.Error = jsonRpcResponse.Error.Message;
-                    }
-                    else
-                    {
-                        response.Content = jsonRpcResponse.Result;
-                    }
-
-                    requestTaskCompletionSource.SetResult(response);
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

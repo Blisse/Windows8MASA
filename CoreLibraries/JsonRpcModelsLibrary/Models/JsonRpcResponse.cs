@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using JsonRpcModelsLibrary.Clients;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -6,65 +7,56 @@ using Newtonsoft.Json.Linq;
 namespace JsonRpcModelsLibrary.Models
 {
     [JsonObject]
-    internal class JsonRpcResponse
+    public class JsonRpcResponse
     {
         [JsonProperty("jsonrpc", Required = Required.Always)]
-        public String JsonRpc { get; set; }
+        public String JsonRpc { get; private set; }
 
+        // nulls are not sent over JSON, but nulls are set when converted to Objects
         [JsonProperty("error", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
-        public JsonRpcError Error { get; set; }
+        public JsonRpcError Error { get; private set; }
 
+        // nulls are not sent over JSON, but nulls are set when converted to Objects
         [JsonProperty("result", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, NullValueHandling = NullValueHandling.Ignore)]
-        public JToken Result { get; set; }
+        public JToken Result { get; private set; }
 
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public String Id { get; set; }
+        // Id is always required because we should only respond to requests
+        [JsonProperty("id", Required = Required.Always)]
+        public String Id { get; private set; }
 
         public JsonRpcResponse()
         {
-            JsonRpc = JsonRpcConstants.Version;
         }
 
-        protected JsonRpcResponse(JsonRpcRequest jsonRpcRequest)
+        private JsonRpcResponse(JsonRpcRequest request)
         {
-            if (jsonRpcRequest.IsNotification)
-            {
-                throw new NotSupportedException("Cannot respond to a notification.");
-            }
-
+            Debug.Assert(request.IsNotification == false, "Cannot respond to a notification.");
             JsonRpc = JsonRpcConstants.Version;
-            Id = jsonRpcRequest.Id;
+            Error = null;
+            Result = null;
+            Id = request.Id;
+        }
+
+        protected JsonRpcResponse(JsonRpcRequest request, JsonRpcError error) : this(request)
+        {
+            Error = error;
+        }
+
+        protected JsonRpcResponse(JsonRpcRequest request, Object result) : this(request)
+        {
+            Result = JToken.FromObject(result);
         }
 
         public static class Factory
         {
-            public static JsonRpcResponse CreateJsonRpcResponse(JsonRpcRequest request, Response response)
+            private static JsonRpcResponse CreateGoodResponse(JsonRpcRequest request, Object result)
             {
-                if (response.IsError)
-                {
-                    return CreateSuccessfulJsonRpcResponse(request, response.Content);
-                }
-                return CreateErrorJsonRpcResponse(request, response.Error);
+                return new JsonRpcResponse(request, result);
             }
 
-            private static JsonRpcResponse CreateSuccessfulJsonRpcResponse(JsonRpcRequest request, JToken result)
+            private static JsonRpcResponse CreateErrorResponse(JsonRpcRequest request, JsonRpcError error)
             {
-                return new JsonRpcResponse(request)
-                {
-                    Result = result
-                };
-            }
-
-            private static JsonRpcResponse CreateErrorJsonRpcResponse(JsonRpcRequest request, String errorMessage)
-            {
-                return new JsonRpcResponse(request)
-                {
-                    Error = new JsonRpcError()
-                    {
-                        Code = 0,
-                        Message = errorMessage
-                    }
-                };
+                return new JsonRpcResponse(request, error);
             }
         }
     }

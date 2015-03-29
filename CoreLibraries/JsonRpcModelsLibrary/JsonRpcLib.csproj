@@ -37,19 +37,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Clients\JsonRpcClient.cs" />
+    <Compile Include="Clients\JsonRpcWriter.cs" />
     <Compile Include="Models\JsonRpcConstants.cs" />
     <Compile Include="Models\JsonRpcError.cs" />
     <Compile Include="Models\JsonRpcRequest.cs" />
     <Compile Include="Models\JsonRpcResponse.cs" />
     <Compile Include="Models\JsonRpcReturnStatus.cs" />
-    <Compile Include="Models\StreamCommand.cs" />
+    <Compile Include="Models\StreamContent.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Readers\IJsonReader.cs" />
-    <Compile Include="Readers\JsonBracketReader.cs" />
-    <Compile Include="Readers\JsonStreamCommandReader.cs" />
-    <Compile Include="Utilities\JObjectExtensions.cs" />
-    <Compile Include="Utilities\JTokenExtensions.cs" />
+    <Compile Include="Clients\JsonRpcReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="Windows, Version=8.1" />
@@ -63,6 +60,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
